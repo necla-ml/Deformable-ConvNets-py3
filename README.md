@@ -7,6 +7,13 @@ The major contributors of this repository include [Yuwen Xiong](https://github.c
 
 **[A third-party improvement](https://github.com/bharatsingh430/Deformable-ConvNets) of Deformable R-FCN + Soft NMS**
 
+## Quick Start
+
+Install from `git` with `pip`:
+
+```python
+pip install git+https://github.com/necla-ml/Deformable-ConvNets-py3
+```
 
 ## Introduction
 

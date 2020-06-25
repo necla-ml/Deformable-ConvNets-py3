@@ -171,6 +171,7 @@ def write_version_py(path, major=None, minor=None, patch=None, suffix='', sha='U
         if build_number > 1:
             version += '.post' + str(build_number)
     elif sha != 'Unknown':
+        # FIXME PYPI version rejects sha
         version += '+' + sha[:7]
 
     import time
@@ -194,18 +195,19 @@ if __name__ == '__main__':
     pkg = 'dcn'
     version = write_version_py(pkg)
     setup(
-        name='DCN',
+        name='DCN-RFCN',
         version=version,
         author='Farley Lai',
         url='https://github.com/necla-ml/Deformable-ConvNets-py3',
         description=f"Forked Deformable-ConvNets for Python 3",
         long_description=readme(),
+        long_description_content_type='text/markdown',
         keywords='computer vision, object detection',
         license='MIT',
         classifiers=[
-            'License :: OSI Approved :: BSD License',
-            'Operating System :: macOS/Ubuntu 16.04+',
-            'Development Status :: 1 - Alpha',
+            'License :: OSI Approved :: MIT License',
+            'Operating System :: POSIX :: Linux',
+            'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',
             'Intended Audience :: Education',
             'Intended Audience :: Science/Research',
