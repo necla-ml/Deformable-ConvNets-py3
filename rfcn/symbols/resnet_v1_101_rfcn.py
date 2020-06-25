@@ -7,10 +7,10 @@
 
 import pickle as cPickle    # py3
 import mxnet as mx
-from utils.symbol import Symbol
-from operator_py.proposal import *            # py3
-from operator_py.proposal_target import *     # py3
-from operator_py.box_annotator_ohem import *  # py3
+from dcn.utils.symbol import Symbol
+from ..operator_py.proposal import *            # py3
+from ..operator_py.proposal_target import *     # py3
+from ..operator_py.box_annotator_ohem import *  # py3
 
 
 class resnet_v1_101_rfcn(Symbol):

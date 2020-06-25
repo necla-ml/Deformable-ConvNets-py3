@@ -16,13 +16,11 @@ import numpy as np
 import numpy.random as npr
 from distutils.util import strtobool
 
-from bbox.bbox_transform import bbox_pred, clip_boxes
-from rpn.generate_anchor import generate_anchors
-from nms.nms import py_nms_wrapper, cpu_nms_wrapper, gpu_nms_wrapper
+from dcn.bbox.bbox_transform import bbox_pred, clip_boxes
+from dcn.rpn.generate_anchor import generate_anchors
+from dcn.nms import py_nms_wrapper, cpu_nms_wrapper, gpu_nms_wrapper
 
 DEBUG = False
-
-
 class ProposalOperator(mx.operator.CustomOp):
     def __init__(self, feat_stride, scales, ratios, output_score,
                  rpn_pre_nms_top_n, rpn_post_nms_top_n, threshold, rpn_min_size):

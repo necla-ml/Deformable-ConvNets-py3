@@ -13,9 +13,8 @@
 
 import os
 from os.path import join as pjoin
-from setuptools import setup
+from setuptools import setup, find_packages
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
 import numpy as np
 
 def find_in_path(name, path):
@@ -96,6 +95,7 @@ def customize_compiler_for_nvcc(self):
     self._compile = _compile
 
 # run the customize_compiler
+from Cython.Distutils import build_ext
 class custom_build_ext(build_ext):
     def build_extensions(self):
         customize_compiler_for_nvcc(self.compiler)
@@ -159,6 +159,7 @@ def write_version_py(path, major=None, minor=None, patch=None, suffix='', sha='U
         sha = sh("git rev-parse HEAD")
         print(f"Build version {major}.{minor}.{patch}-{sha}")
 
+    from pathlib import Path
     path = Path(path).resolve()
     pkg = path.name
     PKG = pkg.upper()
@@ -192,33 +193,6 @@ def readme():
 if __name__ == '__main__':
     pkg = 'dcn'
     version = write_version_py(pkg)
-    
-    '''
-    requirements = [
-        'cython',
-        # 'easydict',
-        # 'opencv',
-    ]
-    
-#    cmdclass = dict(
-#        build_ext=torch.utils.cpp_extension.BuildExtension,
-#        clean=Clean,
-#    )
-
-#    extensions = [ext for ext in ext_modules(pkg)]
-#    namespaces = ['ml']
-#    packages = find_namespace_packages(include=['ml.*'], exclude=('ml.csrc', 'ml.csrc.*'))
-    
-    
-    setup(
-        name='DCN',
-        version=version,
-        ext_modules=ext_modules,
-        cmdclass={'build_ext': custom_build_ext},
-        setup_requires=requirements,
-    )
-    '''
-    
     setup(
         name='DCN',
         version=version,
@@ -243,10 +217,12 @@ if __name__ == '__main__':
             'Topic :: Software Development :: Libraries',
             'Topic :: Software Development :: Libraries :: Python Modules',
         ],
-        #packages=['dcn', 'dcn.bbox', 'dcn.nms'],
-        packages=find_packeges(exclude=['bak', 'experiments', 'faster_rcnn', 'fpn', 'model']),
+        packages=find_packages(exclude=['experiments', 'faster_rcnn', 'fpn', 'model']),
+        package_data=dict(
+            rfcn=['cfgs/rfcn_coco_demo*.yaml']
+        ),
         setup_requires=['cython'],
-        install_requires=['easydict'],
+        install_requires=['easydict', 'mxnet-cu101mkl>=1.6.0'],
         ext_modules=ext_modules,
         cmdclass=dict(build_ext=custom_build_ext),
         zip_safe=False)
