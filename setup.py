@@ -192,10 +192,11 @@ def readme():
     return content
 
 if __name__ == '__main__':
-    pkg = 'dcn'
-    version = write_version_py(pkg)
+    pkgs = ['dcn', 'rfcn']
+    for pkg in pkgs:
+        version = write_version_py(pkg)
     setup(
-        name='DCN-RFCN',
+        name='-'.join(map(lambda pkg: pkg.upper(), pkgs)),
         version=version,
         author='Farley Lai',
         url='https://github.com/necla-ml/Deformable-ConvNets-py3',

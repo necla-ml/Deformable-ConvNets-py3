@@ -776,19 +776,20 @@ class resnet_v1_101_rfcn_dcn_rpn(Symbol):
             if cfg.TEST.CXX_PROPOSAL:
                 rois, score = mx.contrib.sym.Proposal(
                     cls_prob=rpn_cls_prob_reshape, bbox_pred=rpn_bbox_pred, im_info=im_info, name='rois', output_score=True,
-                    feature_stride=cfg.network.RPN_FEAT_STRIDE, scales=tuple(cfg.network.ANCHOR_SCALES),
+                    feature_stride=cfg.network.RPN_FEAT_STRIDE, 
+                    scales=tuple(cfg.network.ANCHOR_SCALES),
                     ratios=tuple(cfg.network.ANCHOR_RATIOS),
                     rpn_pre_nms_top_n=cfg.TEST.RPN_PRE_NMS_TOP_N, rpn_post_nms_top_n=cfg.TEST.RPN_POST_NMS_TOP_N,
                     threshold=cfg.TEST.RPN_NMS_THRESH, rpn_min_size=cfg.TEST.RPN_MIN_SIZE)
             else:
                 rois, score = mx.sym.Custom(
+                    op_type='proposal', 
                     cls_prob=rpn_cls_prob_reshape, bbox_pred=rpn_bbox_pred, im_info=im_info, name='rois', output_score=True,
-                    op_type='proposal', feat_stride=cfg.network.RPN_FEAT_STRIDE,
-                    scales=tuple(cfg.network.ANCHOR_SCALES), ratios=tuple(cfg.network.ANCHOR_RATIOS),
+                    feat_stride=cfg.network.RPN_FEAT_STRIDE,
+                    scales=tuple(cfg.network.ANCHOR_SCALES), 
+                    ratios=tuple(cfg.network.ANCHOR_RATIOS),
                     rpn_pre_nms_top_n=cfg.TEST.RPN_PRE_NMS_TOP_N, rpn_post_nms_top_n=cfg.TEST.RPN_POST_NMS_TOP_N,
                     threshold=cfg.TEST.RPN_NMS_THRESH, rpn_min_size=cfg.TEST.RPN_MIN_SIZE)
-
-
 
         # conv_new_1
         conv_new_1 = mx.sym.Convolution(data=relu1, kernel=(1, 1), num_filter=1024, name="conv_new_1", lr_mult=3.0)
@@ -806,14 +807,14 @@ class resnet_v1_101_rfcn_dcn_rpn(Symbol):
         rfcn_bbox_offset = mx.contrib.sym.DeformablePSROIPooling(name='rfcn_bbox_offset', data=rfcn_bbox_offset_t, rois=rois, group_size=7, pooled_size=7,
                                                                  sample_per_part=4, no_trans=True, part_size=7, output_dim=2, spatial_scale=0.0625)
 
+        '''
         psroipooled_rois_features = mx.contrib.sym.DeformablePSROIPooling(name='psroipooled_rois_features', data=rfcn_cls, rois=rois, trans=rfcn_cls_offset,
                                                                      group_size=1, pooled_size=7, sample_per_part=4, no_trans=False, trans_std=0.1,
                                                                      output_dim=512, spatial_scale=0.0625, part_size=7)
         rois_features = mx.sym.Pooling(name='rois_features', data=psroipooled_rois_features, pool_type='avg', global_pool=True, kernel=(7, 7))
         rois_features = mx.sym.Reshape(name='rois_features_reshape', data=rois_features, shape=(-1, 512))
+        '''
 
-
-        # original 
         psroipooled_cls_rois = mx.contrib.sym.DeformablePSROIPooling(name='psroipooled_cls_rois', data=rfcn_cls, rois=rois, trans=rfcn_cls_offset,
                                                                      group_size=7, pooled_size=7, sample_per_part=4, no_trans=False, trans_std=0.1,
                                                                      output_dim=num_classes, spatial_scale=0.0625, part_size=7)
@@ -852,8 +853,13 @@ class resnet_v1_101_rfcn_dcn_rpn(Symbol):
                                       name='cls_prob_reshape')
             bbox_pred = mx.sym.Reshape(data=bbox_pred, shape=(cfg.TEST.BATCH_IMAGES, -1, 4 * num_reg_classes),
                                        name='bbox_pred_reshape')
+
+            # XXX Pull output conv5 of 2048 channels
+            # group = mx.sym.Group([cls_prob, bbox_pred])
             # group = mx.sym.Group([rois, score, psroipooled_cls_rois, cls_prob, bbox_pred])
-            group = mx.sym.Group([rois, score, rois_features, cls_prob, bbox_pred])
+            # group = mx.sym.Group([rois, score, rois_features, cls_prob, bbox_pred])
+            group = mx.sym.Group([rois, score, cls_prob, bbox_pred, conv_feat])
+            # group = mx.sym.Group([rois, score, cls_prob, bbox_pred, relu1])
 
         self.sym = group
         return group
