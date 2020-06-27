@@ -5,8 +5,6 @@
 The original repo is written in obsolete Python 2 without packaging for distribution and ease of dependency management.
 This fork adapts the code base to Python 3 and offers conventional pip distribution through Git repo as follows:
 
-Install from `git` with `pip`:
-
 ```python
 pip install git+https://github.com/necla-ml/Deformable-ConvNets-py3
 ```
