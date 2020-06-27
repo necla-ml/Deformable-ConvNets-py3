@@ -9,10 +9,35 @@ The major contributors of this repository include [Yuwen Xiong](https://github.c
 
 ## Quick Start
 
+The original repo is written in obsolete Python 2 without packaging for distribution and ease of dependency management.
+This fork adapts the code base to Python 3 and offers conventional pip distribution through Git repo as follows:
+
 Install from `git` with `pip`:
 
 ```python
 pip install git+https://github.com/necla-ml/Deformable-ConvNets-py3
+```
+
+A high level detection interface is available through `ML-Vision` distributed on anaconda repo:
+
+```
+$> conda install ml-vision
+```
+
+The following code segment demonstrates an easy to use RFCN with RoI pooled features exposed.
+The pretrained checkpoint is automatically downloaded.
+
+```python
+from ml import cv
+from ml.vision.models import RFCNDetector
+img = cv.imread('/path/to/image.jpg')
+detector = RFCNDetector(pooling=2)
+assert detector.with_rpn
+rois, dets, pooled = detector.detect(img, return_rpn=True)
+print('dets:', [tuple(det.shape) for det in dets], dets)
+print('rois:', [tuple(roi.shape) for roi in rois])
+print('pooled:', [tuple(feats.shape) for feats in pooled])
+detector.render(img, dets[0], score_thr=0.01, path=f"export/{path.name[:-4]}-rfcn.jpg")
 ```
 
 ## Introduction
