@@ -1,13 +1,6 @@
 # Deformable Convolutional Networks
 
-
-The major contributors of this repository include [Yuwen Xiong](https://github.com/Orpine), [Haozhi Qi](https://github.com/Oh233), [Guodong Zhang](https://github.com/gd-zhang), [Yi Li](https://github.com/liyi14), [Jifeng Dai](https://github.com/daijifeng001), [Bin Xiao](https://github.com/leoxiaobin), [Han Hu](https://github.com/ancientmooner) and  [Yichen Wei](https://github.com/YichenWei).
-
-**We released training/testing code and pre-trained models of Deformable FPN, which is the foundation of our COCO detection 2017 entry.** Slides at [COCO 2017 workshop](http://presentations.cocodataset.org/COCO17-Detect-MSRA.pdf).
-
-**[A third-party improvement](https://github.com/bharatsingh430/Deformable-ConvNets) of Deformable R-FCN + Soft NMS**
-
-## Quick Start
+## Adaptation by NECLA-ML
 
 The original repo is written in obsolete Python 2 without packaging for distribution and ease of dependency management.
 This fork adapts the code base to Python 3 and offers conventional pip distribution through Git repo as follows:
@@ -39,6 +32,14 @@ print('rois:', [tuple(roi.shape) for roi in rois])
 print('pooled:', [tuple(feats.shape) for feats in pooled])
 detector.render(img, dets[0], score_thr=0.01, path=f"export/{path.name[:-4]}-rfcn.jpg")
 ```
+
+----------
+
+The major contributors of this repository include [Yuwen Xiong](https://github.com/Orpine), [Haozhi Qi](https://github.com/Oh233), [Guodong Zhang](https://github.com/gd-zhang), [Yi Li](https://github.com/liyi14), [Jifeng Dai](https://github.com/daijifeng001), [Bin Xiao](https://github.com/leoxiaobin), [Han Hu](https://github.com/ancientmooner) and  [Yichen Wei](https://github.com/YichenWei).
+
+**We released training/testing code and pre-trained models of Deformable FPN, which is the foundation of our COCO detection 2017 entry.** Slides at [COCO 2017 workshop](http://presentations.cocodataset.org/COCO17-Detect-MSRA.pdf).
+
+**[A third-party improvement](https://github.com/bharatsingh430/Deformable-ConvNets) of Deformable R-FCN + Soft NMS**
 
 ## Introduction
 
