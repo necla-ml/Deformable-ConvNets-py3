@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 
 # C extensions
+dcn/bbox/bboox.c
+dcn/nms/cpu_nms.c
+dcn/nms/gpu_nms.cpp
 *.so
 
 # Distribution / packaging
