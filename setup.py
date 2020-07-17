@@ -13,9 +13,71 @@
 
 import os
 from os.path import join as pjoin
+from collections import OrderedDict
 from setuptools import setup, find_packages
 from distutils.extension import Extension
 import numpy as np
+
+named_arches = OrderedDict([
+    ('Kepler+Tesla', '3.7'),
+    ('Kepler', '3.5+PTX'),
+    ('Maxwell+Tegra', '5.3'),
+    ('Maxwell', '5.0;5.2+PTX'),
+    ('Pascal', '6.0;6.1+PTX'),
+    ('Volta', '7.0+PTX'),
+    ('Turing', '7.5+PTX'),
+])
+
+supported_arches = ['3.5', '3.7', '5.0', '5.2', '5.3', '6.0', '6.1', '6.2',
+                    '7.0', '7.2', '7.5']
+
+valid_arch_strings = supported_arches + [s + "+PTX" for s in supported_arches]
+
+# SM52 or SM_52, compute_52 
+#   – Quadro M6000, 
+#   - GeForce 900, GTX-970, GTX-980, 
+#   - GTX Titan X
+# SM61 or SM_61, compute_61 
+#   – GTX 1080, GTX 1070, GTX 1060, GTX 1050, GTX 1030,
+#   - Titan Xp, Tesla P40, Tesla P4, 
+#   - Discrete GPU on the NVIDIA Drive PX2
+# SM75 or SM_75, compute_75 
+#   – GTX/RTX Turing 
+#   – GTX 1660 Ti, RTX 2060, RTX 2070, RTX 2080, 
+#   - Titan RTX,
+
+'''
+Determine CUDA arch flags to use.
+    For an arch, say "6.1", the added compile flag will be
+    ``-gencode=arch=compute_61,code=sm_61``.
+    For an added "+PTX", an additional
+    ``-gencode=arch=compute_xx,code=compute_xx`` is added.
+
+-gencode=arch=compute_52,code=sm_52
+-gencode=arch=compute_61,code=sm_61
+-gencode=arch=compute_75,code=sm_75
+'''
+
+def get_cuda_arch_flags(arch_list='5.2;6.1;7.5'):
+    # arch_list = os.environ.get('TORCH_CUDA_ARCH_LIST', '5.2;6.1;7.5')
+    if arch_list is not None:
+        # Deal with lists that are ' ' separated (only deal with ';' after)
+        arch_list = arch_list.replace(' ', ';')
+        for named_arch, archval in named_arches.items():
+            arch_list = arch_list.replace(named_arch, archval)
+        arch_list = arch_list.split(';')
+
+    flags = []
+    for arch in arch_list:
+        if arch not in valid_arch_strings:
+            raise ValueError("Unknown CUDA arch ({}) or GPU not supported".format(arch))
+        else:
+            num = arch[0] + arch[2]
+            flags.append('-gencode=arch=compute_{},code=sm_{}'.format(num, num))
+            if arch.endswith('+PTX'):
+                flags.append('-gencode=arch=compute_{},code=compute_{}'.format(num, num))
+    return flags
+    # return list(set(flags))
 
 def find_in_path(name, path):
     "Find a file in a search path"
@@ -130,8 +192,9 @@ ext_modules = [
         # we're only going to use certain compiler args with nvcc and not with
         # gcc the implementation of this trick is in customize_compiler() below
         extra_compile_args={'gcc': ["-Wno-unused-function"],
-                            'nvcc': ['-arch=sm_35',
-                                     '--ptxas-options=-v',
+                            'nvcc': get_cuda_arch_flags() + [ 
+                                     # '-arch=sm_35',
+                                     # '--ptxas-options=-v',
                                      '-c',
                                      '--compiler-options',
                                      "'-fPIC'"]},
@@ -225,7 +288,8 @@ if __name__ == '__main__':
             rfcn=['cfgs/rfcn_coco_demo*.yaml']
         ),
         setup_requires=['cython'],
-        install_requires=['easydict', 'mxnet-cu101mkl>=1.6.0'],
+        install_requires=['easydict'],
+        install_requires=['mxnet-cu101mkl>=1.6.0'],
         ext_modules=ext_modules,
         cmdclass=dict(build_ext=custom_build_ext),
         zip_safe=False)

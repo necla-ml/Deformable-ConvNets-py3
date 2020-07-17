@@ -1,6 +1,6 @@
 Cython
 EasyDict
-opencv-python
-# mxnet-cu80==0.12.0b20171027
+# opencv-python
 # Prerequisite: cuda-9.2 and cuDnn-7.1.4
+# mxnet-cu80==0.12.0b20171027
 # mxnet-cu92mkl
