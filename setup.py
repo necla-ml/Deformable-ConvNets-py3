@@ -288,8 +288,8 @@ if __name__ == '__main__':
             rfcn=['cfgs/rfcn_coco_demo*.yaml']
         ),
         setup_requires=['cython'],
-        install_requires=['easydict'],
-        install_requires=['mxnet-cu101mkl>=1.6.0'],
+        install_requires=['easydict', 'mxnet-cu101mkl>=1.6.0'],
+        # install_requires=['easydict'],
         ext_modules=ext_modules,
         cmdclass=dict(build_ext=custom_build_ext),
         zip_safe=False)
