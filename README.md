@@ -5,18 +5,18 @@
 The original repo is written in obsolete Python 2 without packaging for distribution and ease of dependency management.
 This fork adapts the code base to Python 3 and offers conventional pip distribution through Git repo as follows:
 
-```python
-pip install git+https://github.com/necla-ml/Deformable-ConvNets-py3
+```sh
+$> conda install dcn-rfcn -c NECLA-ML
 ```
 
 A high level detection interface is available through `ML-Vision` distributed on anaconda repo:
 
-```
-$> conda install ml-vision
+```sh
+$> conda install ml-vision -c NECLA-ML
 ```
 
 The following code segment demonstrates an easy to use RFCN with RoI pooled features exposed.
-The pretrained checkpoint is automatically downloaded.
+The pretrained checkpoint is automatically downloaded from [the soft-nms fork](https://github.com/bharatsingh430/Deformable-ConvNets).
 
 ```python
 from ml import cv
